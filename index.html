@@ -3,85 +3,259 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Projects</title>
+    <title>Quaria's Projects</title>
+    <link rel="icon" type="image/png" href="images/WebIcon.png">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
+        import { getFirestore, doc, updateDoc, increment, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2sZ8xynQHwPx9OGcLPkugBhWAeRSSx1I",
+            authDomain: "quarywebsite-8119a.firebaseapp.com",
+            projectId: "quarywebsite-8119a",
+            storageBucket: "quarywebsite-8119a.firebasestorage.app",
+            messagingSenderId: "1095469040951",
+            appId: "1:1095469040951:web:9f8ba1d780a3b3b5f7c6b2",
+            measurementId: "G-TGNES33KFE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // Function to increment download count for a given project ID
+        async function incrementDownloadCount(projectId)
+        {
+            const docRef = doc(db, "GameDownloads", projectId);
+            try
+            {
+                await updateDoc(docRef,
+                {
+                    count: increment(1)
+                });
+                console.log(`Download count for ${projectId} incremented`);
+                // Fetch and update the displayed count
+                await updateDisplayCount(projectId);
+            }
+            catch (error)
+            {
+                if (error.code === 'not-found')
+                {
+                    await setDoc(docRef, { count: 1 });
+                    console.log(`New Download Counter created for ${projectId} (count = 1)`);
+                    await updateDisplayCount(projectId);
+                }
+                else
+                {
+                    console.error("Error updating download count:", error);
+                }
+            }
+        }
+        
+        // Function to fetch and display download count
+        async function updateDisplayCount(projectId)
+        {
+            const docRef = doc(db, "GameDownloads", projectId);
+            try
+            {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists())
+                {
+                    const count = docSnap.data().count;
+                    const countElement = document.getElementById(`count-${projectId}`);
+                    if (countElement)
+                    {
+                        countElement.textContent = count;
+                    }
+                }
+            }
+            catch (error)
+            {
+                console.error("Error fetching count:", error);
+            }
+        }
+        
+        // Function to load all initial counts
+        async function loadAllCounts()
+        {
+            const projectCards = document.querySelectorAll('.project-card');
+            for (const card of projectCards)
+            {
+                const projectId = card.getAttribute('data-project-id');
+                if (projectId)
+                {
+                    await updateDisplayCount(projectId);
+                }
+            }
+        }
+        
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllCounts();
+            
+            const downloadBtns = document.querySelectorAll('.download-btn');
+            
+            downloadBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const projectCard = btn.closest('.project-card');
+                    let projectId = projectCard?.getAttribute('data-project-id');
+                    
+                    if (projectId)
+                    {
+                        incrementDownloadCount(projectId).catch(console.error);
+                    }
+                });
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="container">
-    <!-- header exactly as requested: "Personal Projects" -->
     <div class="page-header">
-        <h1>Personal Projects</h1>
+        <img src="images/logo.png" alt="Quaria's Logo" class="site-logo">
     </div>
 
-    <!-- grid of projects: includes thumbnail, title at bottom (under thumbnail) and description below title -->
-    <div class="projects-grid">
-        
-        <!-- Project 1 - Analog Weather Station with custom image -->
-        <div class="project-card">
+    <div class="projects-grid" id="projectsGrid">
+        <!-- Freedom -->
+        <div class="project-card" data-project-id="freedom">
             <div class="thumbnail">
-                <img src="/images/thumbnail_ntc.png" alt="Analog Weather Station thumbnail">
+                <img src="images/thumbnail_freedom.png" alt="FREEDOM thumbnail">
             </div>
             <div class="card-content">
-                <div class="project-title">Analog Weather Station</div>
-                <div class="project-description">A retro-inspired weather monitor using sensors and a custom display. Logs temperature, humidity, and pressure.</div>
+                <div class="project-title">FREEDOM</div>
+                <div class="project-year">2023</div>
+                <div class="project-description">You were a prisoner, and now a test subject. You dream of making your way out of this terrific place.</div>
+                <div class="project-tags">
+                    <span class="tag">RPG Maker</span>
+                    <span class="tag">Puzzle</span>
+                    <span class="tag">2D</span>
+                </div>
+                <div class="download-wrapper">
+                    <a href="https://drive.google.com/uc?export=download&id=1VhlaCME4YoYQk-6qaU9OLCOPFiuwyByw" target="_blank" class="download-btn">Download</a>
+                    <span class="download-count" id="count-freedom">0</span>
+                </div>
             </div>
         </div>
         
-        <!-- Project 2 -->
-        <div class="project-card">
+        <!-- The Little Story -->
+        <div class="project-card" data-project-id="the_little_story">
             <div class="thumbnail">
-                🖼️ thumbnail
+                <img src="images/thumbnail_tls.png" alt="The Little Story thumbnail">
             </div>
             <div class="card-content">
-                <div class="project-title">Recipe Vault</div>
-                <div class="project-description">Simple personal recipe manager with categorized lists, ingredient scaling, and no-fluff design.</div>
+                <div class="project-title">The Little Story</div>
+                <div class="project-year">2024</div>
+                <div class="project-description">This story is so little, it'll blow your mind 🤯. Sphiri on his way to rescue a Calico Cat. Evil Blue Bun must stop him.</div>
+                <div class="project-tags">
+                    <span class="tag">2D</span>
+                    <span class="tag">Top-Down</span>
+                    <span class="tag">Beauty</span>
+                </div>
+                <div class="download-wrapper">
+                    <a href="https://drive.google.com/uc?export=download&id=1hVdREscsxM8b_7fq6s-nYz56IJZOUJHI" target="_blank" class="download-btn">Download</a>
+                    <span class="download-count" id="count-the_little_story">0</span>
+                </div>
             </div>
         </div>
         
-        <!-- Project 3 -->
-        <div class="project-card">
+        <!-- GEOMETRICAL DREAMS -->
+        <div class="project-card" data-project-id="geometrical_dreams">
             <div class="thumbnail">
-                🌿 thumbnail
+                <img src="images/thumbnail_gd.png" alt="Geometrical Dreams thumbnail">
             </div>
             <div class="card-content">
-                <div class="project-title">Garden Tracker</div>
-                <div class="project-description">Keep track of planting dates, watering schedule, and harvest notes for a home vegetable garden.</div>
+                <div class="project-title">Geometrical Dreams</div>
+                <div class="project-year">2024</div>
+                <div class="project-description">Get inside your friends, and eliminate their nightmares from within. Some are easy to defeat, and some are not.</div>
+                <div class="project-tags">
+                    <span class="tag">2D</span>
+                    <span class="tag">Top-Down</span>
+                    <span class="tag">RPG Maker</span>
+                </div>
+                <div class="download-wrapper">
+                    <a href="https://drive.google.com/uc?export=download&id=113wSe821nAS1P_qSFHB0BxioP0ar5rMo" target="_blank" class="download-btn">Download</a>
+                    <span class="download-count" id="count-geometrical_dreams">0</span>
+                </div>
             </div>
         </div>
         
-        <!-- Project 4 -->
-        <div class="project-card">
+        <!-- Throw Gal -->
+        <div class="project-card" data-project-id="throw_gal">
             <div class="thumbnail">
-                🎧 thumbnail
+                <img src="images/thumbnail_throwgal.png" alt="Throw Gal thumbnail">
             </div>
             <div class="card-content">
-                <div class="project-title">Minimal Podcast Feed</div>
-                <div class="project-description">Lightweight RSS podcast aggregator without clutter. Subscribe and listen to episodes directly.</div>
+                <div class="project-title">Throw Gal</div>
+                <div class="project-year">2026</div>
+                <div class="project-description">This is a fan-game, which is continuation of Throw Bro. You have to make your way back to Throw Island.</div>
+                <div class="project-tags">
+                    <span class="tag">2D</span>
+                    <span class="tag">Platformer</span>
+                    <span class="tag">Fan-Game</span>
+                </div>
+                <div class="download-wrapper">
+                    <a href="https://drive.google.com/uc?export=download&id=1ABwHMX0Eb04hzDElNTrDw9CH5uPz3oor" target="_blank" class="download-btn">Download</a>
+                    <span class="download-count" id="count-throw_gal">0</span>
+                </div>
             </div>
         </div>
         
-        <!-- Project 5 -->
-        <div class="project-card">
+        <!-- UNWORDED - CANCELLED -->
+        <div class="project-card" data-project-id="unworded">
             <div class="thumbnail">
-                🧮 thumbnail
+                <img src="images/thumbnail_unworded_NO.png" alt="UNWORDED thumbnail">
             </div>
             <div class="card-content">
-                <div class="project-title">Budget Flow</div>
-                <div class="project-description">Plain expense tracker with categories and monthly summaries. No charts, just essential numbers.</div>
+                <div class="project-title">UNWORDED</div>
+                <div class="project-year">2026</div>
+                <div class="project-description">A mysterious book had appeared in your room. You must stop The Entity from infecting and destroying worlds.</div>
+                <div class="project-tags">
+                    <span class="tag">RPG</span>
+                    <span class="tag">Top-Down</span>
+                    <span class="tag">2D</span>
+                </div>
+                <span class="in-development">Cancelled</span>
             </div>
         </div>
-        
-        <!-- Project 6 -->
-        <div class="project-card">
+
+        <!-- NTC -->
+        <div class="project-card" data-project-id="ntc">
             <div class="thumbnail">
-                📖 thumbnail
+                <img src="images/thumbnail_ntc.png" alt="NTC thumbnail">
             </div>
             <div class="card-content">
-                <div class="project-title">Reading Log</div>
-                <div class="project-description">Keep a list of books, reading progress, and short personal notes. Simple and distraction‑free.</div>
+                <div class="project-title">NTC ( NeoTech Corp. )</div>
+                <div class="project-year">2026</div>
+                <div class="project-description">A granny-like game that takes place on a crashed spaceship. Your goal is to repair the escape pod and return to NTC HQ.</div>
+                <div class="project-tags">
+                    <span class="tag">Horror</span>
+                    <span class="tag">Puzzle</span>
+                    <span class="tag">First-Person</span>
+                    <span class="tag">Survival</span>
+                </div>
+                <div class="download-wrapper">
+                    <a href="https://drive.google.com/uc?export=download&id=1srONPN1pvhjAEYmVlCfcyVhYRB6kzlMZ" target="_blank" class="download-btn">Download</a>
+                    <span class="download-count" id="count-ntc">0</span>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="youtube-section">
+        <a href="https://www.youtube.com/@Quarynet" target="_blank" class="youtube-btn">Check out my YouTube</a>
+    </div>
 </div>
+
+<script>
+    const grid = document.getElementById('projectsGrid');
+    const cards = Array.from(grid.children);
+    cards.reverse().forEach(card => grid.appendChild(card));
+</script>
 </body>
 </html>
