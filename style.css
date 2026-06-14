@@ -133,7 +133,6 @@ body {
 .download-btn {
     color: #00A2FF;
     font-size: 0.9rem;
-    font-weight: 500;
     background: none;
     border: none;
     cursor: pointer;
@@ -141,6 +140,10 @@ body {
     width: fit-content;
     padding: 0;
     text-decoration: none;
+}
+
+.download-btn:hover {
+    opacity: 0.9;
 }
 
 /* Download wrapper */
@@ -169,26 +172,48 @@ body {
     width: fit-content;
 }
 
-/* YouTube section */
-.youtube-section {
+/* Social section */
+.social-section {
     margin-top: 2rem;
     padding-top: 1.5rem;
     border-top: 2px solid #dcdcdc;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
-/* YouTube button */
-.youtube-btn {
+/* Social button styles */
+.social-btn {
     display: inline-block;
-    background-color: #E12219;
-    color: #ffffff;
     text-decoration: none;
     font-size: 1rem;
-    font-weight: 500;
     padding: 0.6rem 1.5rem;
     border: none;
     cursor: pointer;
     border-radius: 6px;
+}
+
+.social-btn:hover {
+    opacity: 0.9;
+}
+
+/* YouTube button */
+.youtube-btn {
+    background-color: #E12219;
+    color: #ffffff;
+}
+
+/* GitHub button */
+.github-btn {
+    background-color: #2b3137;
+    color: #ffffff;
+}
+
+/* Discord button */
+.discord-btn {
+    background-color: #7289DA;
+    color: #ffffff;
 }
 
 /* small spacing adjustments */
@@ -215,8 +240,8 @@ hr {
         gap: 1.5rem;
     }
     
-    .youtube-btn {
-        font-size: 0.9rem;
-        padding: 0.5rem 1.2rem;
+    .social-btn {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
     }
 }

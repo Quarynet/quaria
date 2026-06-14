@@ -29,7 +29,7 @@
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        // Function to increment download count for a given project ID
+        // Function to increment download count
         async function incrementDownloadCount(projectId)
         {
             const docRef = doc(db, "GameDownloads", projectId);
@@ -247,8 +247,10 @@
         </div>
     </div>
 
-    <div class="youtube-section">
-        <a href="https://www.youtube.com/@Quarynet" target="_blank" class="youtube-btn">Check out my YouTube</a>
+    <div class="social-section">
+        <a href="https://www.youtube.com/@Quarynet" target="_blank" class="social-btn youtube-btn">YouTube Channel</a>
+        <a href="https://github.com/Quarynet" target="_blank" class="social-btn github-btn">GitHub Page</a>
+        <a href="https://discord.gg/zuWfHppTh4" target="_blank" class="social-btn discord-btn">Discord Server</a>
     </div>
 </div>
 
